@@ -1,0 +1,131 @@
+.dashboard-home {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Action Buttons */
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.add-btn, .delete-all-btn {
+  background-color: #1976d3;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.delete-all-btn {
+  background-color: #d32f2f;
+}
+
+.add-btn:hover {
+  background-color: #1565c0;
+}
+
+.delete-all-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* Table Container */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Enables horizontal scrolling */
+  margin-top: 20px;
+}
+
+/* Customer Table */
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Prevents shrinking */
+}
+
+.customer-table th, .customer-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap; /* Prevents text wrapping */
+}
+
+.customer-table th {
+  background-color: #1976d3;
+  color: white;
+}
+
+.customer-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* No Data Message */
+.no-data {
+  text-align: center;
+  padding: 20px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Buttons inside the table */
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.edit-btn, .delete-btn {
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.edit-btn {
+  background-color: #ffa000;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #ff8f00;
+}
+
+.delete-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-home {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .customer-table th, .customer-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .add-btn, .delete-all-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}

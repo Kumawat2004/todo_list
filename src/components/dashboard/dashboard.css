@@ -1,0 +1,74 @@
+/* General Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar (Default for large screens) */
+.sidebar {
+  width: 250px;
+  background-color: #2d3748;
+  height: 100vh;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Menu */
+.menu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: white;
+  display: block;
+}
+
+.menu li:hover {
+  background-color: #4a5568;
+}
+
+/* Main Content */
+.content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+/* Convert Sidebar into a Navbar on Small Screens */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .menu li {
+    padding: 10px 20px;
+  }
+
+  .content {
+    margin-left: 0;
+  }
+}
