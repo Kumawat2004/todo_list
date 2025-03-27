@@ -5,7 +5,7 @@ import "./newCustomer.css";
 const NewCustomer = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const editingCustomer = location.state?.customer || null;
+  const editingCustomer = location.state?.customer || null; // ✅ Fixed state retrieval
 
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +13,9 @@ const NewCustomer = () => {
     phone: "",
     address: "",
   });
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (editingCustomer) {
@@ -26,25 +29,42 @@ const NewCustomer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!formData.name || !formData.email || !formData.phone || !formData.address) {
+      setError("All fields are required!");
+      return;
+    }
+
     let storedCustomers = JSON.parse(localStorage.getItem("customers")) || [];
 
     if (editingCustomer) {
-      // Update existing customer
       storedCustomers = storedCustomers.map((cust) =>
         cust.email === editingCustomer.email ? formData : cust
       );
+      setMessage("Customer updated successfully!");
     } else {
-      // Add new customer
       storedCustomers.push(formData);
+      setMessage("Customer added successfully!");
     }
 
     localStorage.setItem("customers", JSON.stringify(storedCustomers));
-    navigate("/dashboard");
+    window.dispatchEvent(new Event("storage")); // Sync with other tabs
+
+    // ✅ Success message show karne ke baad 2 sec me redirect ho jaye
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 2000);
   };
 
   return (
-    <div className="new">
+    <div className="form-container">
       <h1>{editingCustomer ? "Edit Customer" : "Add New Customer"}</h1>
+
+      {message && <p className="message-box success-message">{message}</p>}
+      {error && <p className="message-box error-message">{error}</p>}
+
       <form onSubmit={handleSubmit}>
         <label>
           Name:

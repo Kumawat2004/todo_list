@@ -27,8 +27,9 @@ const DashboardHome = () => {
     navigate("/dashboard/new-customer");
   };
 
+  // ✅ Fixed edit function (Correct format me data bhejna)
   const handleEditCustomer = (customer) => {
-    navigate("/dashboard/new-customer", { state: customer });
+    navigate("/dashboard/new-customer", { state: { customer } });
   };
 
   const handleDeleteCustomer = (index) => {

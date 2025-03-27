@@ -33,7 +33,7 @@ const Gotra = () => {
 
   const handleDeleteGotra = (id) => {
     const updatedGotras = gotras.filter((gotra) => gotra.id !== id);
-    localStorage.setItem("gotras", JSON.stringify(updatedGotras));
+    localStorage.setItem("gotras", JSON.stringify(updatedGotras, null, 2));
     setGotras(updatedGotras);
     window.dispatchEvent(new Event("storage")); // Notify other components
   };
@@ -74,8 +74,8 @@ const Gotra = () => {
               gotras.map((gotra, index) => (
                 <tr key={gotra.id}>
                   <td>{index + 1}</td>
-                  <td>{gotra.english}</td>
-                  <td>{gotra.hindi}</td>
+                  <td>{gotra.gotar_name_english}</td>
+                  <td>{gotra.gotar_name_hindi}</td>
                   <td className="gotra-action-buttons">
                     <button
                       className="gotra-edit-btn"
