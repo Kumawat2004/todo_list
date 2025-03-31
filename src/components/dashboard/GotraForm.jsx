@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import "./newCustomer.css";
+
+const API_URL = "https://vivah-backend-my.onrender.com/public/api/v1/gotras";
 
 const GotraForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const existingGotra = location.state || null;
 
-  const [gotra, setGotra] = useState({
-    gotar_name_english: "",
-    gotar_name_hindi: "",
-  });
-
+  const [gotra, setGotra] = useState({ gotraNameEnglish: "", gotraNameHindi: "" });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (existingGotra) {
@@ -21,36 +21,43 @@ const GotraForm = () => {
     }
   }, [existingGotra]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
+    setLoading(true);
 
-    if (!gotra.gotar_name_english || !gotra.gotar_name_hindi) {
+    if (!gotra.gotraNameEnglish || !gotra.gotraNameHindi) {
       setError("Both Gotra names are required!");
+      setLoading(false);
       return;
     }
 
-    const existingGotras = JSON.parse(localStorage.getItem("gotras")) || [];
-    let updatedGotras;
-
-    if (existingGotra) {
-      updatedGotras = existingGotras.map((g) =>
-        g.id === existingGotra.id ? gotra : g
-      );
-      setMessage("Gotra updated successfully!");
-    } else {
-      const newGotra = { id: Date.now(), ...gotra };
-      updatedGotras = [...existingGotras, newGotra];
-      setMessage("Gotra added successfully!");
-    }
-
-    localStorage.setItem("gotras", JSON.stringify(updatedGotras));
-
-    //  Success message show hone ke baad 2 sec me dashboard pe redirect
-    setTimeout(() => {
+    try {
+      if (existingGotra) {
+        // Update existing Gotra
+        console.log("Updating Gotra", gotra);
+        const response = await axios.put(`${API_URL}/${existingGotra.id}`, gotra);
+        setMessage("Gotra updated successfully!");
+      } else {
+        // Add new Gotra
+        console.log("Adding Gotra", gotra);
+        const response = await axios.post(API_URL, gotra);
+        setMessage("Gotra added successfully!");
+      }
       navigate("/dashboard/gotra-management");
-    }, 500);
+    } catch (err) {
+      console.error("Error occurred while adding/updating Gotra:", err);
+
+      // Display detailed error message from the response if available
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message); // API returns a detailed message
+      } else {
+        setError("Something went wrong! Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,8 +72,8 @@ const GotraForm = () => {
           Gotra Name (English):
           <input
             type="text"
-            value={gotra.gotar_name_english}
-            onChange={(e) => setGotra({ ...gotra, gotar_name_english: e.target.value })}
+            value={gotra.gotraNameEnglish}
+            onChange={(e) => setGotra({ ...gotra, gotraNameEnglish: e.target.value })}
             required
           />
         </label>
@@ -74,12 +81,14 @@ const GotraForm = () => {
           Gotra Name (हिन्दी):
           <input
             type="text"
-            value={gotra.gotar_name_hindi}
-            onChange={(e) => setGotra({ ...gotra, gotar_name_hindi: e.target.value })}
+            value={gotra.gotraNameHindi}
+            onChange={(e) => setGotra({ ...gotra, gotraNameHindi: e.target.value })}
             required
           />
         </label>
-        <button type="submit">{existingGotra ? "Update Gotra" : "Save Gotra"}</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Saving..." : existingGotra ? "Update Gotra" : "Save Gotra"}
+        </button>
       </form>
     </div>
   );
