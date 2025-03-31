@@ -27,6 +27,7 @@ const GotraForm = () => {
     setMessage("");
     setLoading(true);
 
+    // Validation check for input fields
     if (!gotra.gotraNameEnglish || !gotra.gotraNameHindi) {
       setError("Both Gotra names are required!");
       setLoading(false);
@@ -34,26 +35,33 @@ const GotraForm = () => {
     }
 
     try {
+      let response;
       if (existingGotra) {
         // Update existing Gotra
-        console.log("Updating Gotra", gotra);
-        const response = await axios.put(`${API_URL}/${existingGotra.id}`, gotra);
+        response = await axios.put(`${API_URL}/${existingGotra.id.timestamp}`, gotra, {
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log("Gotra updated successfully:", response.data);
         setMessage("Gotra updated successfully!");
       } else {
         // Add new Gotra
-        console.log("Adding Gotra", gotra);
-        const response = await axios.post(API_URL, gotra);
+        response = await axios.post(API_URL, gotra, {
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log("Gotra added successfully:", response.data);
         setMessage("Gotra added successfully!");
       }
-      navigate("/dashboard/gotra-management");
+
+      navigate("/dashboard/gotra-management"); // Redirect to Gotra management page after successful submit
     } catch (err) {
       console.error("Error occurred while adding/updating Gotra:", err);
 
-      // Display detailed error message from the response if available
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message); // API returns a detailed message
+      if (err.response) {
+        // Log detailed error response
+        console.log("Error response:", err.response);
+        setError(err.response.data.message || "Something went wrong while adding/updating Gotra.");
       } else {
-        setError("Something went wrong! Please try again.");
+        setError("Network error or server not reachable.");
       }
     } finally {
       setLoading(false);

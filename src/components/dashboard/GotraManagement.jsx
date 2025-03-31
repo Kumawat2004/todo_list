@@ -1,121 +1,118 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import "./dashboardHome.css";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import './dashboardHome.css';
 
-const API_URL = "https://vivah-backend-my.onrender.com/public/api/v1/gotras";
-
-const Gotra = () => {
+const GotraManagement = () => {
   const navigate = useNavigate();
   const [gotras, setGotras] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchGotras();
-  }, []);
-
+  // Fetch Gotras from API
   const fetchGotras = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(API_URL);
-      
-      console.log("API Response:", response); // Log the full response to check the data structure
-      // Check the data structure
-      setGotras(response.data.data || response.data); // If response has "data" key, handle accordingly
-    } catch (err) {
-      // Log the error for better debugging
-      console.error("Error fetching gotras:", err);
-      if (err.response) {
-        // Handle case where response exists but request failed (e.g., 4xx or 5xx status codes)
-        setError(`Error: ${err.response.data?.message || 'Failed to fetch Gotras'}`);
-      } else if (err.request) {
-        // Handle case where no response is received from the server
-        setError("Network error: No response from the server.");
+      const response = await axios.get('/public/api/v1/gotras');
+      console.log('API Response:', response);
+
+      if (Array.isArray(response.data.data)) {
+        setGotras(response.data.data);
       } else {
-        // Handle other unexpected errors
-        setError("Something went wrong.");
+        setError('Data format is incorrect.');
+        setGotras([]);
       }
+    } catch (err) {
+      setError('Failed to fetch gotras.');
+      console.error('Error fetching gotras:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddGotra = () => navigate("/dashboard/gotra-form");
-  const handleEditGotra = (gotra) => navigate("/dashboard/gotra-form", { state: gotra });
+  useEffect(() => {
+    fetchGotras();
+  }, []);
 
+  // Navigate to Add Gotra form
+  const handleAddGotra = () => navigate('/dashboard/gotra-form');
+
+  // Navigate to Edit Gotra form
+  const handleEditGotra = (gotra) => navigate('/dashboard/gotra-form', { state: gotra });
+
+  // Delete a specific Gotra
   const handleDeleteGotra = async (id) => {
-    if (window.confirm("Are you sure you want to delete this Gotra?")) {
+    if (window.confirm('Are you sure you want to delete this Gotra?')) {
       try {
-        await axios.delete(`${API_URL}/${id}`);
-        setGotras(gotras.filter((gotra) => gotra.id !== id));
+        const response = await axios.delete(`/public/api/v1/gotras/${id}`);
+        console.log("Gotra deleted:", response.data);
+        setGotras(gotras.filter((gotra) => gotra.id.timestamp !== id)); // Remove deleted Gotra from state
       } catch (err) {
-        setError("Error deleting gotra.");
-        console.error("Error deleting gotra:", err);
+        setError('Error deleting gotra.');
+        console.error('Error deleting gotra:', err);
       }
     }
   };
 
+  // Delete all Gotras
   const handleDeleteAll = async () => {
-    if (window.confirm("Are you sure you want to delete all Gotras?")) {
+    if (window.confirm('Are you sure you want to delete all Gotras?')) {
       try {
-        await axios.delete(API_URL);
-        setGotras([]);
+        const response = await axios.delete('/public/api/v1/gotras');
+        console.log("All Gotras deleted:", response.data);
+        setGotras([]); // Clear all gotras from local state
       } catch (err) {
-        setError("Error deleting all gotras.");
-        console.error("Error deleting all gotras:", err);
+        setError('Error deleting all gotras.');
+        console.error('Error deleting all gotras:', err);
       }
     }
   };
 
   return (
-    <div className="dashboard-home gotra-management">
+    <div className="dashboard-home">
       <h1>Gotra Management</h1>
 
       {error && <p className="error-message">{error}</p>}
 
-      <div className="gotra-actions">
-        <button className="add-gotra-btn" onClick={handleAddGotra}>Add Gotra</button>
+      <div className="table-actions">
+        <button className="add-btn" onClick={handleAddGotra}>Add Gotra</button>
         <button className="delete-all-btn" onClick={handleDeleteAll}>Delete All</button>
       </div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="gotra-table-container">
-          <table className="gotra-table">
-            <thead>
-              <tr>
-                <th>Sr. No.</th>
-                <th>Gotra Name (English)</th>
-                <th>Gotra Name (हिन्दी)</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gotras.length > 0 ? (
-                gotras.map((gotra, index) => (
-                  <tr key={gotra.id}>
-                    <td>{index + 1}</td>
-                    <td>{gotra.gotraNameEnglish}</td>
-                    <td>{gotra.gotraNameHindi}</td>
-                    <td className="gotra-action-buttons">
-                      <button className="gotra-edit-btn" onClick={() => handleEditGotra(gotra)}>Edit</button>
-                      <button className="gotra-delete-btn" onClick={() => handleDeleteGotra(gotra.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="gotra-no-data">No Gotras available</td>
+      <div className="table-container">
+        {loading && <p>Loading...</p>}
+        <table className="gotra-table">
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Gotra Name (English)</th>
+              <th>Gotra Name (हिन्दी)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gotras.length > 0 ? (
+              gotras.map((gotra, index) => (
+                <tr key={gotra.id.timestamp}>
+                  <td>{index + 1}</td>
+                  <td>{gotra.gotraNameEnglish}</td>
+                  <td>{gotra.gotraNameHindi}</td>
+                  <td className="action-buttons">
+                    <button className="edit-btn" onClick={() => handleEditGotra(gotra)}>Edit</button>
+                    <button className="delete-btn" onClick={() => handleDeleteGotra(gotra.id.timestamp)}>Delete</button>
+                  </td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="no-data">No Gotras available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default Gotra;
+export default GotraManagement;
