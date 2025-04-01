@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./newCustomer.css";
 
-const API_URL = "https://vivah-backend-my.onrender.com/public/api/v1/gotras";
+const API_URL = "/public/api/v1/gotras";
 
 const GotraForm = () => {
   const navigate = useNavigate();

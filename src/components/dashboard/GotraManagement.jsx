@@ -40,33 +40,6 @@ const GotraManagement = () => {
   // Navigate to Edit Gotra form
   const handleEditGotra = (gotra) => navigate('/dashboard/gotra-form', { state: gotra });
 
-  // Delete a specific Gotra
-  const handleDeleteGotra = async (id) => {
-    if (window.confirm('Are you sure you want to delete this Gotra?')) {
-      try {
-        const response = await axios.delete(`/public/api/v1/gotras/${id}`);
-        console.log("Gotra deleted:", response.data);
-        setGotras(gotras.filter((gotra) => gotra.id.timestamp !== id)); // Remove deleted Gotra from state
-      } catch (err) {
-        setError('Error deleting gotra.');
-        console.error('Error deleting gotra:', err);
-      }
-    }
-  };
-
-  // Delete all Gotras
-  const handleDeleteAll = async () => {
-    if (window.confirm('Are you sure you want to delete all Gotras?')) {
-      try {
-        const response = await axios.delete('/public/api/v1/gotras');
-        console.log("All Gotras deleted:", response.data);
-        setGotras([]); // Clear all gotras from local state
-      } catch (err) {
-        setError('Error deleting all gotras.');
-        console.error('Error deleting all gotras:', err);
-      }
-    }
-  };
 
   return (
     <div className="dashboard-home">
@@ -76,7 +49,7 @@ const GotraManagement = () => {
 
       <div className="table-actions">
         <button className="add-btn" onClick={handleAddGotra}>Add Gotra</button>
-        <button className="delete-all-btn" onClick={handleDeleteAll}>Delete All</button>
+        <button className="delete-all-btn" >Delete All</button>
       </div>
 
       <div className="table-container">
@@ -99,7 +72,7 @@ const GotraManagement = () => {
                   <td>{gotra.gotraNameHindi}</td>
                   <td className="action-buttons">
                     <button className="edit-btn" onClick={() => handleEditGotra(gotra)}>Edit</button>
-                    <button className="delete-btn" onClick={() => handleDeleteGotra(gotra.id.timestamp)}>Delete</button>
+                    <button className="delete-btn" >Delete</button>
                   </td>
                 </tr>
               ))
