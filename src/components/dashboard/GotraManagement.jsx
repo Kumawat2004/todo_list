@@ -9,11 +9,14 @@ const GotraManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Use the environment variable for the base URL
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   // Fetch Gotras from API
   const fetchGotras = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/public/api/v1/gotras');
+      const response = await axios.get(`${API_BASE_URL}/public/api/v1/gotras`);
       console.log('API Response:', response);
 
       if (Array.isArray(response.data.data)) {
@@ -40,7 +43,6 @@ const GotraManagement = () => {
   // Navigate to Edit Gotra form
   const handleEditGotra = (gotra) => navigate('/dashboard/gotra-form', { state: gotra });
 
-
   return (
     <div className="dashboard-home">
       <h1>Gotra Management</h1>
@@ -49,7 +51,7 @@ const GotraManagement = () => {
 
       <div className="table-actions">
         <button className="add-btn" onClick={handleAddGotra}>Add Gotra</button>
-        <button className="delete-all-btn" >Delete All</button>
+        <button className="delete-all-btn">Delete All</button>
       </div>
 
       <div className="table-container">
@@ -72,7 +74,7 @@ const GotraManagement = () => {
                   <td>{gotra.gotraNameHindi}</td>
                   <td className="action-buttons">
                     <button className="edit-btn" onClick={() => handleEditGotra(gotra)}>Edit</button>
-                    <button className="delete-btn" >Delete</button>
+                    <button className="delete-btn">Delete</button>
                   </td>
                 </tr>
               ))

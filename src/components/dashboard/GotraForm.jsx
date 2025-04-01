@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./newCustomer.css";
 
-const API_URL = "/public/api/v1/gotras";
+// Using dynamic API URL based on environment
+const API_URL = `${import.meta.env.VITE_API_URL}/public/api/v1/gotras`;
 
 const GotraForm = () => {
   const navigate = useNavigate();

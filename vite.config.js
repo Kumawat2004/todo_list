@@ -1,12 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/public/api/v1/gotras': 'https://vivah-backend-my.onrender.com',
+      '/public/api/v1/gotras': {
+        target: 'https://vivah-backend-my.onrender.com',
+        changeOrigin: true,
+        secure: false, // Set to true if using HTTPS with a valid certificate
+      },
     },
   },
 });
