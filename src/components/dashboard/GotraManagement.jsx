@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './dashboardHome.css';
@@ -9,8 +9,8 @@ const GotraManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Use the environment variable for the base URL
-  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  // API Base URL for Netlify
+  const API_BASE_URL = "https://vivah-backend-my.onrender.com";
 
   // Fetch Gotras from API
   const fetchGotras = async () => {
@@ -37,54 +37,41 @@ const GotraManagement = () => {
     fetchGotras();
   }, []);
 
-  // Navigate to Add Gotra form
-  const handleAddGotra = () => navigate('/dashboard/gotra-form');
-
-  // Navigate to Edit Gotra form
-  const handleEditGotra = (gotra) => navigate('/dashboard/gotra-form', { state: gotra });
-
   return (
     <div className="dashboard-home">
       <h1>Gotra Management</h1>
 
       {error && <p className="error-message">{error}</p>}
 
-      <div className="table-actions">
-        <button className="add-btn" onClick={handleAddGotra}>Add Gotra</button>
-        <button className="delete-all-btn">Delete All</button>
-      </div>
-
       <div className="table-container">
-        {loading && <p>Loading...</p>}
-        <table className="gotra-table">
-          <thead>
-            <tr>
-              <th>Sr. No.</th>
-              <th>Gotra Name (English)</th>
-              <th>Gotra Name (हिन्दी)</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gotras.length > 0 ? (
-              gotras.map((gotra, index) => (
-                <tr key={gotra.id.timestamp}>
-                  <td>{index + 1}</td>
-                  <td>{gotra.gotraNameEnglish}</td>
-                  <td>{gotra.gotraNameHindi}</td>
-                  <td className="action-buttons">
-                    <button className="edit-btn" onClick={() => handleEditGotra(gotra)}>Edit</button>
-                    <button className="delete-btn">Delete</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <table className="gotra-table">
+            <thead>
               <tr>
-                <td colSpan="4" className="no-data">No Gotras available</td>
+                <th>Sr. No.</th>
+                <th>Gotra Name (English)</th>
+                <th>Gotra Name (हिन्दी)</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {gotras.length > 0 ? (
+                gotras.map((gotra, index) => (
+                  <tr key={gotra.id.timestamp}>
+                    <td>{index + 1}</td>
+                    <td>{gotra.gotraNameEnglish}</td>
+                    <td>{gotra.gotraNameHindi}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" className="no-data">No Gotras available</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
